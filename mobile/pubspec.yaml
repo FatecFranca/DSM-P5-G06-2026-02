@@ -1,0 +1,26 @@
+name: equilibra
+description: "Equilibra — autoavaliação de risco de burnout em estudantes (PI 5º semestre DSM, Fatec Franca)."
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.9.0 <4.0.0"   # Flutter 3.35 ou mais novo
+
+dependencies:
+  flutter:
+    sdk: flutter
+  go_router: ^14.6.2          # navegação entre telas
+  flutter_riverpod: ^2.6.1    # gerenciamento de estado
+  dio: ^5.7.0                 # cliente HTTP para a API
+  shared_preferences: ^2.3.3  # guarda o id anônimo e o consentimento
+  uuid: ^4.5.1                # gera o id anônimo do aparelho
+  fl_chart: ^0.69.2           # gráfico do histórico
+  intl: ^0.19.0               # formatação de datas
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true

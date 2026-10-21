@@ -1,0 +1,37 @@
+# Ambiente local: PostgreSQL + API.
+#   docker compose up --build
+# API em http://localhost:8000/docs
+#
+# O banco NÃO publica porta para fora da rede do compose, igual à nuvem:
+# só a API acessa o PostgreSQL.
+
+services:
+  banco:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: equilibra
+      POSTGRES_USER: equilibra
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-equilibra}
+    volumes:
+      - dados_banco:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U equilibra -d equilibra"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      DATABASE_URL: postgresql+psycopg://equilibra:${POSTGRES_PASSWORD:-equilibra}@banco:5432/equilibra
+      API_KEY: ${API_KEY:-troque-esta-chave}
+    ports:
+      - "8000:8000"
+    depends_on:
+      banco:
+        condition: service_healthy
+
+volumes:
+  dados_banco:

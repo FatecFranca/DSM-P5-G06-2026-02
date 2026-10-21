@@ -1,0 +1,3 @@
+pandas==3.0.5
+scikit-learn==1.9.1
+joblib==1.6.0

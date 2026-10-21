@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Segredos
+.env
+
+# Base tratada (gerada por ml/src/preparar_base.py)
+ml/data/processed/
+
+# Flutter / Dart
+mobile/.dart_tool/
+mobile/build/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/**/Pods/
+mobile/android/.gradle/
+mobile/android/local.properties
+
+# IDEs e sistema
+.idea/
+.vscode/
+.DS_Store

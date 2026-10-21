@@ -1,0 +1,47 @@
+{
+  "linhas": 50000,
+  "colunas": 16,
+  "ausentes": 0,
+  "linhas_duplicadas": 0,
+  "ids_duplicados": 0,
+  "distribuicao_alvo": {
+    "medio": 21144,
+    "baixo": 16369,
+    "alto": 12487
+  },
+  "faixas_numericas": {
+    "nota_semestre_anterior": [
+      2.96,
+      10.0
+    ],
+    "horas_ia_semana": [
+      0.0,
+      40.0
+    ],
+    "horas_estudo_semana": [
+      1.0,
+      35.86
+    ],
+    "qtd_ferramentas_ia": [
+      1.0,
+      5.0
+    ],
+    "dependencia_ia": [
+      1.0,
+      10.0
+    ],
+    "ansiedade_provas": [
+      1.0,
+      10.0
+    ],
+    "assinatura_paga": [
+      0.0,
+      1.0
+    ]
+  },
+  "colunas_removidas": {
+    "Student_ID": "identificador, sem valor preditivo",
+    "Post_Semester_GPA": "medida no fim do semestre: vazamento de dados",
+    "Skill_Retention_Score": "medida no fim do semestre: vazamento de dados"
+  }
+}
