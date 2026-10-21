@@ -30,4 +30,16 @@ void main() {
     expect(find.text('Risco baixo'), findsOneWidget);
     expect(find.text('Precisa conversar?'), findsNothing);
   });
+
+  testWidgets('Cartão do nível de risco tem cor opaca no tema claro e no escuro', (tester) async {
+    for (final brilho in Brightness.values) {
+      await tester.pumpWidget(MaterialApp(
+        theme: ThemeData(brightness: brilho),
+        home: ResultadoTela(resultado: _resultado('alto')),
+      ));
+
+      final cartao = tester.widget<Card>(find.byType(Card).first);
+      expect(cartao.color!.a, 1.0, reason: 'tema $brilho');
+    }
+  });
 }

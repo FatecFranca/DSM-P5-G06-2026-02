@@ -21,7 +21,8 @@ class ResultadoTela extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         children: [
           Card(
-            color: cor.withValues(alpha: 0.12),
+            // Cor opaca: com transparência, a sombra do cartão aparece pelo fundo e o "suja".
+            color: Color.alphaBlend(cor.withValues(alpha: 0.12), Theme.of(context).colorScheme.surface),
             shape: RoundedRectangleBorder(
               side: BorderSide(color: cor, width: 2),
               borderRadius: BorderRadius.circular(16),
