@@ -3,6 +3,10 @@ uvicorn[standard]==0.53.0
 sqlalchemy==2.1.5
 psycopg[binary]==3.3.6
 pydantic-settings==2.16.0
+# Contas: tokens de login, hash de senha e validação de e-mail
+PyJWT==2.15.1
+argon2-cffi==25.1.0
+email-validator==2.3.0
 # Mesmas versões usadas no treino (ml/requirements.txt): o modelo depende delas.
 pandas==3.0.5
 scikit-learn==1.9.1

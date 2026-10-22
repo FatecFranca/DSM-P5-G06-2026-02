@@ -2,9 +2,9 @@
 
 import uuid
 from datetime import datetime
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import AfterValidator, BaseModel, ConfigDict, EmailStr, Field
 
 AreaCurso = Literal["exatas", "negocios", "humanas", "saude", "artes"]
 AnoCurso = Literal["primeiro_ano", "segundo_ano", "terceiro_ano", "quarto_ano", "pos_graduacao"]
@@ -95,6 +95,41 @@ class AvaliacaoResumo(BaseModel):
     probabilidades: Probabilidades
     horas_ia_semana: float
     ansiedade_provas: int
+
+
+# E-mail sempre em minúsculas: "Ana@x.com" e "ana@x.com" são a mesma conta.
+Email = Annotated[EmailStr, AfterValidator(str.lower)]
+VERSAO_TERMO_CONTA = "2.0"  # termo que inclui a guarda do e-mail
+
+
+class CadastroEntrada(BaseModel):
+    usuario_id: uuid.UUID = Field(description="Id anônimo do aparelho; o histórico dele vira da conta")
+    email: Email
+    senha: str = Field(min_length=8, max_length=128)
+    consentimento: Literal[True] = Field(description="Aceite do termo que inclui a guarda do e-mail")
+    versao_termo: str = VERSAO_TERMO_CONTA
+
+
+class LoginEntrada(BaseModel):
+    email: Email
+    senha: str = Field(min_length=1, max_length=128)
+    usuario_id_anonimo: uuid.UUID | None = Field(
+        None, description="Id anônimo deste aparelho; as avaliações dele são unidas à conta"
+    )
+
+
+class TokenResposta(BaseModel):
+    token: str
+    tipo: Literal["bearer"] = "bearer"
+    expira_em: datetime
+    usuario_id: uuid.UUID
+    email: str
+
+
+class ContaResposta(BaseModel):
+    usuario_id: uuid.UUID
+    email: str
+    conta_criada_em: datetime
 
 
 class Saude(BaseModel):

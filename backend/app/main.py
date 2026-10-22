@@ -8,7 +8,7 @@ Documentação interativa: http://localhost:8000/docs
 from fastapi import Depends, FastAPI
 
 from . import classificador
-from .routers import predicoes, usuarios
+from .routers import auth, predicoes, usuarios
 from .schemas import Saude
 from .seguranca import exigir_chave
 
@@ -23,6 +23,7 @@ app = FastAPI(
 )
 
 protegido = [Depends(exigir_chave)]
+app.include_router(auth.router, dependencies=protegido)
 app.include_router(usuarios.router, dependencies=protegido)
 app.include_router(predicoes.router, dependencies=protegido)
 

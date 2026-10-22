@@ -2,15 +2,24 @@
 -- Executado automaticamente pelo docker-compose na primeira subida do banco.
 -- No Azure (PostgreSQL Flexible Server), rode este arquivo uma vez com psql.
 --
--- Princípios (LGPD): nenhum nome, e-mail ou telefone é guardado. O usuário é
--- identificado por um UUID gerado no próprio aparelho. Ao apagar o usuário,
--- todas as avaliações dele são apagadas junto (ON DELETE CASCADE).
+-- Princípios (LGPD): nenhum nome ou telefone é guardado. O usuário é identificado
+-- por um UUID gerado no próprio aparelho. A conta é opcional: só quem se cadastra
+-- tem e-mail e senha guardados (senha apenas como hash Argon2; termo versão 2.0).
+-- Ao apagar o usuário, todas as avaliações dele são apagadas junto (ON DELETE CASCADE).
+--
+-- Bancos criados antes das contas: aplicar database/migracoes/001_contas.sql.
 
 CREATE TABLE IF NOT EXISTS usuarios (
     id                UUID PRIMARY KEY,                       -- gerado no app
     consentimento_em  TIMESTAMPTZ NOT NULL,                   -- aceite do termo
     versao_termo      VARCHAR(10) NOT NULL DEFAULT '1.0',
-    criado_em         TIMESTAMPTZ NOT NULL DEFAULT now()
+    criado_em         TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+    -- Conta (opcional)
+    email             VARCHAR(254) UNIQUE,                    -- sempre em minúsculas
+    senha_hash        VARCHAR(255),                           -- hash Argon2, nunca a senha
+    conta_criada_em   TIMESTAMPTZ,
+    CONSTRAINT conta_completa CHECK ((email IS NULL) = (senha_hash IS NULL))
 );
 
 CREATE TABLE IF NOT EXISTS avaliacoes (

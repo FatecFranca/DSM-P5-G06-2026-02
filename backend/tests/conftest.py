@@ -9,10 +9,12 @@ import pytest
 _banco = Path(tempfile.mkdtemp()) / "teste.db"
 os.environ["DATABASE_URL"] = f"sqlite:///{_banco}"
 os.environ["API_KEY"] = "chave-de-teste"
+os.environ["JWT_SEGREDO"] = "segredo-de-teste-com-mais-de-32-caracteres"
 
 from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy import event  # noqa: E402
 
+from app.autenticacao import limite_de_login  # noqa: E402
 from app.database import Base, engine  # noqa: E402
 from app.main import app  # noqa: E402
 
@@ -26,6 +28,7 @@ def _ligar_chaves_estrangeiras(conexao, _):
 def banco_limpo():
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
+    limite_de_login.limpar()
     yield
 
 

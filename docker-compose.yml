@@ -27,6 +27,7 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg://equilibra:${POSTGRES_PASSWORD:-equilibra}@banco:5432/equilibra
       API_KEY: ${API_KEY:-troque-esta-chave}
+      JWT_SEGREDO: ${JWT_SEGREDO:-troque-este-segredo-jwt-com-pelo-menos-32-caracteres}
     ports:
       - "8000:8000"
     depends_on:
