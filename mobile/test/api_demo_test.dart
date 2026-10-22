@@ -41,4 +41,14 @@ void main() {
     await api.apagarDados('x');
     expect(await api.historico('x'), isEmpty);
   });
+
+  test('Modo demo simula cadastro e login mantendo o id do aparelho', () async {
+    final cadastro = await api.cadastrar(usuarioId: 'anon-1', email: 'Ana@Exemplo.com', senha: '12345678');
+    expect(cadastro.usuarioId, 'anon-1');
+    expect(cadastro.email, 'ana@exemplo.com');
+    expect(cadastro.expirada, isFalse);
+
+    final login = await api.entrar(email: 'ana@exemplo.com', senha: '12345678', usuarioIdAnonimo: 'anon-1');
+    expect(login.usuarioId, 'anon-1');
+  });
 }

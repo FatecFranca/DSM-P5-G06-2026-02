@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 import 'api_cliente.dart';
 import 'models/questionario.dart';
 import 'models/resultado.dart';
+import 'models/sessao.dart';
 
 /// Substitui a API quando o app roda com --dart-define=MODO_DEMO=true.
 ///
@@ -41,6 +43,31 @@ class ApiDemo implements ApiCliente {
 
   @override
   Future<void> registrarUsuario(String usuarioId) async {}
+
+  /// No demo não há servidor de contas: qualquer e-mail e senha válidos entram,
+  /// e o aparelho continua com o mesmo histórico local.
+  @override
+  Future<Sessao> cadastrar({
+    required String usuarioId,
+    required String email,
+    required String senha,
+  }) async =>
+      _sessaoSimulada(usuarioId, email);
+
+  @override
+  Future<Sessao> entrar({
+    required String email,
+    required String senha,
+    String? usuarioIdAnonimo,
+  }) async =>
+      _sessaoSimulada(usuarioIdAnonimo ?? const Uuid().v4(), email);
+
+  Sessao _sessaoSimulada(String usuarioId, String email) => Sessao(
+        token: 'token-demo',
+        usuarioId: usuarioId,
+        email: email.toLowerCase(),
+        expiraEm: DateTime.now().add(const Duration(days: 7)),
+      );
 
   @override
   Future<Resultado> prever(String usuarioId, Questionario respostas) async {

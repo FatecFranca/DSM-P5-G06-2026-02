@@ -5,22 +5,35 @@
 | Rota | Tela | O que faz |
 | --- | --- | --- |
 | `/consentimento` | Consentimento | Termo de uso e privacidade (LGPD). Registra o id anônimo na API |
-| `/` | Início | Acesso à autoavaliação e ao histórico; menu para apagar os dados |
+| `/` | Início | Acesso à autoavaliação e ao histórico; situação da conta; menu para sair e apagar os dados |
 | `/questionario` | Questionário | 12 perguntas com listas, controles deslizantes e chave liga/desliga |
-| `/resultado` | Resultado | Nível de risco, probabilidades, orientações e apoio (CVV) no risco alto |
+| `/resultado` | Resultado | Nível de risco, probabilidades, orientações e apoio (CVV) no risco alto; convite para criar conta |
 | `/historico` | Histórico | Gráfico da chance de risco alto e lista das avaliações |
+| `/entrar` | Sua conta | Criar conta ou entrar (e-mail e senha). `/entrar?modo=entrar` abre direto no login |
+
+## Conta (opcional)
+
+- O app funciona sem conta; o **resultado nunca depende de login**.
+- Criar conta transforma o usuário anônimo do aparelho em conta: o histórico continua o mesmo.
+  O cadastro exige o aceite do termo **2.0** (que inclui a guarda do e-mail).
+- Entrar numa conta une a ela as avaliações anônimas do aparelho.
+- O token de login fica no **armazenamento seguro** do sistema (`flutter_secure_storage`: Keystore no Android),
+  nunca nas preferências comuns. Ele vale 7 dias.
+- Sessão expirada: o início avisa e oferece **Entrar** ou **Continuar sem conta**.
+- Sair da conta (ou apagar os dados) volta o aparelho a anônimo, com um novo id e o termo pedido de novo.
+- No modo demonstração a conta é simulada: qualquer e-mail e senha válidos entram.
 
 ## Organização do código
 
 ```
 lib/
-  main.dart               ponto de entrada (carrega preferências, inicia o Riverpod)
-  core/                   configuração, tema e rotas (go_router)
-  data/                   cliente da API (dio), armazenamento local, modelos e opções
-  state/provedores.dart   provedores Riverpod (estado)
+  main.dart               ponto de entrada (carrega preferências e a sessão salva, inicia o Riverpod)
+  core/                   configuração, tema, rotas (go_router) e validações dos formulários
+  data/                   cliente da API (dio), modo demo, armazenamentos (local e seguro), modelos e opções
+  state/provedores.dart   provedores Riverpod (estado), incluindo o controle da sessão de login
   screens/                uma tela por arquivo
   widgets/                campos reutilizáveis do formulário
-test/                     testes de unidade dos modelos
+test/                     testes de unidade e de widgets (apoio/falsos.dart: API falsa para os testes)
 ```
 
 ## Primeira vez: gerar as pastas Android e iOS

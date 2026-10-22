@@ -5,9 +5,12 @@ import '../core/tema.dart';
 import '../data/models/resultado.dart';
 
 class ResultadoTela extends StatelessWidget {
-  const ResultadoTela({super.key, required this.resultado});
+  const ResultadoTela({super.key, required this.resultado, this.convidarParaConta = false});
 
   final Resultado resultado;
+
+  /// Mostra o convite para criar conta (usuário sem login). Nunca esconde o resultado.
+  final bool convidarParaConta;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +65,18 @@ class ResultadoTela extends StatelessWidget {
           ],
           const SizedBox(height: 16),
           Text(resultado.aviso, style: estilo.bodySmall),
+          if (convidarParaConta) ...[
+            const SizedBox(height: 16),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.person_add_alt_1_outlined),
+                title: const Text('Quer acompanhar sua evolução?'),
+                subtitle: const Text('Crie uma conta gratuita para guardar seu histórico.'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/entrar'),
+              ),
+            ),
+          ],
           const SizedBox(height: 24),
           FilledButton(onPressed: () => context.go('/'), child: const Text('Voltar ao início')),
           const SizedBox(height: 8),

@@ -1,9 +1,11 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../core/tema.dart';
+import '../data/api_cliente.dart';
 import '../data/models/resultado.dart';
 import '../state/provedores.dart';
 
@@ -25,10 +27,16 @@ class HistoricoTela extends ConsumerWidget {
               children: [
                 Text('$e', textAlign: TextAlign.center),
                 const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () => ref.invalidate(historicoProvider),
-                  child: const Text('Tentar de novo'),
-                ),
+                if (e is ErroSessao)
+                  FilledButton(
+                    onPressed: () => context.push('/entrar?modo=entrar'),
+                    child: const Text('Entrar'),
+                  )
+                else
+                  OutlinedButton(
+                    onPressed: () => ref.invalidate(historicoProvider),
+                    child: const Text('Tentar de novo'),
+                  ),
               ],
             ),
           ),

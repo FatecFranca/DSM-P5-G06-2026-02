@@ -14,6 +14,7 @@ dependencies:
   dio: ^5.7.0                 # cliente HTTP para a API
   shared_preferences: ^2.3.3  # guarda o id anônimo e o consentimento
   uuid: ^4.5.1                # gera o id anônimo do aparelho
+  flutter_secure_storage: ^11.2.0  # guarda o token de login com a criptografia do sistema
   fl_chart: ^0.69.2           # gráfico do histórico
   intl: ^0.19.0               # formatação de datas
 

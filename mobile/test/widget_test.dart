@@ -42,4 +42,20 @@ void main() {
       expect(cartao.color!.a, 1.0, reason: 'tema $brilho');
     }
   });
+
+  testWidgets('Convite para criar conta aparece só quando pedido, sem esconder o resultado', (tester) async {
+    tester.view.physicalSize = const Size(800, 2400); // tela inteira visível
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(MaterialApp(home: ResultadoTela(resultado: _resultado('alto'))));
+    expect(find.text('Quer acompanhar sua evolução?'), findsNothing);
+
+    await tester.pumpWidget(MaterialApp(
+      home: ResultadoTela(resultado: _resultado('alto', apoio: 'CVV: ligue 188'), convidarParaConta: true),
+    ));
+    expect(find.text('Quer acompanhar sua evolução?'), findsOneWidget);
+    expect(find.text('Risco alto'), findsOneWidget);
+    expect(find.text('Precisa conversar?'), findsOneWidget);
+  });
 }

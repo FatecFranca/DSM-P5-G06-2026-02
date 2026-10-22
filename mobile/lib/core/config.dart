@@ -14,6 +14,8 @@ class Config {
     defaultValue: 'troque-esta-chave',
   );
   static const versaoTermo = '1.0';
+  /// Termo aceito ao criar conta: inclui a guarda do e-mail.
+  static const versaoTermoConta = '2.0';
 
   /// --dart-define=MODO_DEMO=true: roda sem a API (ver data/api_demo.dart).
   static const modoDemo = bool.fromEnvironment('MODO_DEMO');

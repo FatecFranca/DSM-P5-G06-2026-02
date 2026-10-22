@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../data/models/resultado.dart';
 import '../screens/consentimento_tela.dart';
+import '../screens/entrar_tela.dart';
 import '../screens/historico_tela.dart';
 import '../screens/inicio_tela.dart';
 import '../screens/questionario_tela.dart';
@@ -26,9 +27,19 @@ final rotasProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/questionario', builder: (context, state) => const QuestionarioTela()),
       GoRoute(
         path: '/resultado',
-        builder: (context, state) => ResultadoTela(resultado: state.extra! as Resultado),
+        builder: (context, state) => ResultadoTela(
+          resultado: state.extra! as Resultado,
+          convidarParaConta: ref.read(sessaoProvider) == null,
+        ),
       ),
       GoRoute(path: '/historico', builder: (context, state) => const HistoricoTela()),
+      GoRoute(
+        path: '/entrar',
+        builder: (context, state) => EntrarTela(
+          modoInicial:
+              state.uri.queryParameters['modo'] == 'entrar' ? ModoConta.entrar : ModoConta.criar,
+        ),
+      ),
     ],
   );
 });
