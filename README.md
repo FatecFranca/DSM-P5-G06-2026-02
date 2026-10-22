@@ -72,9 +72,22 @@ Veja [`mobile/README.md`](mobile/README.md).
 | POST | `/usuarios` | Registra o aceite do termo para o id anônimo do aparelho |
 | POST | `/predicoes` | Classifica o risco e salva a avaliação |
 | GET | `/usuarios/{id}/avaliacoes` | Histórico, do mais recente ao mais antigo |
-| DELETE | `/usuarios/{id}` | Apaga o usuário e todas as avaliações (LGPD) |
+| DELETE | `/usuarios/{id}` | Apaga o usuário, a conta (se houver) e todas as avaliações (LGPD) |
+| POST | `/auth/cadastro` | Transforma o usuário anônimo do aparelho numa conta (e-mail e senha) e devolve um token |
+| POST | `/auth/login` | Confere e-mail e senha e devolve um token; pode unir à conta o histórico anônimo do aparelho |
+| GET | `/auth/me` | Dados da conta dona do token |
 
 Todas as rotas, exceto `/saude`, exigem o cabeçalho `X-API-Key`.
+
+### Contas e login
+
+- A conta é **opcional**: sem login o app funciona com o id anônimo, e o resultado da autoavaliação nunca depende de conta.
+- Depois que o usuário cria conta, as rotas com os dados dele (`/predicoes`, histórico e exclusão) exigem também
+  `Authorization: Bearer <token>`. Sem token: `401`; token de outra conta: `403`.
+- O token (JWT, HS256) vale 7 dias. A senha é guardada só como hash Argon2.
+- Após 5 senhas erradas para o mesmo e-mail, o login fica bloqueado por 15 minutos (`429`).
+- Em produção (`AMBIENTE=producao`) a API não sobe com os valores de exemplo de `API_KEY` e `JWT_SEGREDO`.
+- Bancos criados antes das contas: aplicar `database/migracoes/001_contas.sql`.
 
 ## Sprints
 
