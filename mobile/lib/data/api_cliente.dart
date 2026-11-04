@@ -31,14 +31,16 @@ class ApiCliente {
   /// [token]: token da sessão de login; quando presente, vai em todas as chamadas.
   ApiCliente({Dio? dio, String? token})
       : _token = token,
-        _dio = dio ??
-            Dio(BaseOptions(
-              baseUrl: Config.apiUrl,
-              connectTimeout: const Duration(seconds: 15),
-              // O Container Apps pode estar "dormindo" (escala a zero): a 1ª chamada demora mais.
-              receiveTimeout: const Duration(seconds: 30),
-              headers: {'X-API-Key': Config.apiKey},
-            ));
+        _dio = dio ?? criarDio();
+
+  /// Conexão HTTP com a API, já com o endereço e a chave do app.
+  static Dio criarDio() => Dio(BaseOptions(
+        baseUrl: Config.apiUrl,
+        connectTimeout: const Duration(seconds: 15),
+        // O Container Apps pode estar "dormindo" (escala a zero): a 1ª chamada demora mais.
+        receiveTimeout: const Duration(seconds: 30),
+        headers: {'X-API-Key': Config.apiKey},
+      ));
 
   final Dio _dio;
   final String? _token;

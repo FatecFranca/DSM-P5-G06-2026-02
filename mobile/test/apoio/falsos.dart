@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:dio/dio.dart';
 import 'package:equilibra/data/api_cliente.dart';
 import 'package:equilibra/data/models/questionario.dart';
 import 'package:equilibra/data/models/resultado.dart';
@@ -60,13 +64,57 @@ class ApiFalsa implements ApiCliente {
   }
 }
 
-/// Container do Riverpod com armazenamentos em memória e a API falsa.
+/// Container do Riverpod com armazenamentos em memória e a API falsa no lugar das duas APIs.
+/// Atenção: trocar as APIs inteiras esconde problemas de ligação entre provedores (como um ciclo);
+/// para isso use [criarContainerComRede], que mantém os provedores reais.
 Future<ProviderContainer> criarContainer(ApiFalsa api, {Map<String, Object> prefs = const {}}) async {
   SharedPreferences.setMockInitialValues(prefs);
   FlutterSecureStorage.setMockInitialValues({});
   final container = ProviderContainer(overrides: [
     prefsProvider.overrideWithValue(await SharedPreferences.getInstance()),
     apiProvider.overrideWithValue(api),
+    apiPublicaProvider.overrideWithValue(api),
   ]);
   return container;
+}
+
+/// Responde as chamadas do Dio sem rede e guarda o que foi enviado.
+class AdaptadorFalso implements HttpClientAdapter {
+  AdaptadorFalso(this.responder);
+
+  final ResponseBody Function(RequestOptions pedido) responder;
+  final pedidos = <RequestOptions>[];
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) async {
+    pedidos.add(options);
+    return responder(options);
+  }
+
+  @override
+  void close({bool force = false}) {}
+}
+
+ResponseBody resposta(int status, Object corpo, {Map<String, List<String>> cabecalhos = const {}}) =>
+    ResponseBody.fromString(jsonEncode(corpo), status, headers: {
+      Headers.contentTypeHeader: [Headers.jsonContentType],
+      ...cabecalhos,
+    });
+
+/// Container com os provedores REAIS do app (como no celular); só a rede é falsa.
+Future<ProviderContainer> criarContainerComRede(
+  AdaptadorFalso adaptador, {
+  Map<String, Object> prefs = const {},
+}) async {
+  SharedPreferences.setMockInitialValues(prefs);
+  FlutterSecureStorage.setMockInitialValues({});
+  final dio = Dio(BaseOptions(baseUrl: 'http://api'))..httpClientAdapter = adaptador;
+  return ProviderContainer(overrides: [
+    prefsProvider.overrideWithValue(await SharedPreferences.getInstance()),
+    dioProvider.overrideWithValue(dio),
+  ]);
 }

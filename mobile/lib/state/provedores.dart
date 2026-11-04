@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,11 +27,22 @@ final sessaoInicialProvider = Provider<Sessao?>((ref) => null);
 /// Sessão de login atual. null = usuário anônimo (ou sessão expirada).
 final sessaoProvider = NotifierProvider<SessaoControle, Sessao?>(SessaoControle.new);
 
-/// A API é recriada quando a sessão muda, para enviar o token certo.
+/// Conexão HTTP única do app. Nos testes é trocada por uma que não usa a rede,
+/// mantendo reais os provedores abaixo dela.
+final dioProvider = Provider<Dio>((ref) => ApiCliente.criarDio());
+
+/// API sem token, para cadastro e login. Não depende da sessão: por isso o SessaoControle
+/// pode usá-la sem criar um ciclo (sessão → API → sessão).
+final apiPublicaProvider = Provider<ApiCliente>(
+  (ref) => Config.modoDemo ? ApiDemo(ref.watch(prefsProvider)) : ApiCliente(dio: ref.watch(dioProvider)),
+);
+
+/// API com o token da sessão atual, para os dados do usuário. É recriada quando a sessão muda.
+/// Não use dentro do SessaoControle (ciclo); lá vale o apiPublicaProvider.
 final apiProvider = Provider<ApiCliente>(
   (ref) => Config.modoDemo
       ? ApiDemo(ref.watch(prefsProvider))
-      : ApiCliente(token: ref.watch(sessaoProvider)?.token),
+      : ApiCliente(dio: ref.watch(dioProvider), token: ref.watch(sessaoProvider)?.token),
 );
 
 /// Histórico do usuário. Use ref.invalidate(historicoProvider) para recarregar.
@@ -46,7 +58,8 @@ class SessaoControle extends Notifier<Sessao?> {
   /// Cria a conta a partir do usuário anônimo deste aparelho (o histórico continua).
   Future<void> cadastrar({required String email, required String senha}) async {
     final usuarioId = ref.read(armazenamentoProvider).usuarioId;
-    final sessao = await ref.read(apiProvider).cadastrar(usuarioId: usuarioId, email: email, senha: senha);
+    final sessao =
+        await ref.read(apiPublicaProvider).cadastrar(usuarioId: usuarioId, email: email, senha: senha);
     await _iniciar(sessao);
   }
 
@@ -54,7 +67,7 @@ class SessaoControle extends Notifier<Sessao?> {
   Future<void> entrar({required String email, required String senha}) async {
     final usuarioIdAnonimo = ref.read(armazenamentoProvider).usuarioId;
     final sessao = await ref
-        .read(apiProvider)
+        .read(apiPublicaProvider)
         .entrar(email: email, senha: senha, usuarioIdAnonimo: usuarioIdAnonimo);
     await _iniciar(sessao);
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/mensagens.dart';
 import '../state/provedores.dart';
 
 /// Primeira tela: termo de uso e privacidade (LGPD). Sem aceite, o app não segue.
@@ -25,7 +26,7 @@ class _ConsentimentoTelaState extends ConsumerState<ConsentimentoTela> {
       if (mounted) context.go('/');
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mensagemDeErro(e))));
     } finally {
       if (mounted) setState(() => _enviando = false);
     }

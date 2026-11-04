@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/mensagens.dart';
 import '../core/recomecar.dart';
 import '../data/api_cliente.dart';
 import '../data/models/questionario.dart';
@@ -31,7 +32,7 @@ class _QuestionarioTelaState extends ConsumerState<QuestionarioTela> {
       if (!mounted) return;
       if (e is ErroCadastroAusente) return recomecarCadastro(context, ref);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('$e'),
+        content: Text(mensagemDeErro(e)),
         action: e is ErroSessao
             ? SnackBarAction(label: 'Entrar', onPressed: () => context.push('/entrar?modo=entrar'))
             : null,

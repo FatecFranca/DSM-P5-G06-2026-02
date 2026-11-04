@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/config.dart';
+import '../core/mensagens.dart';
 import '../data/models/sessao.dart';
 import '../state/provedores.dart';
 
@@ -39,7 +40,7 @@ class InicioTela extends ConsumerWidget {
       if (context.mounted) context.go('/consentimento');
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mensagemDeErro(e))));
       }
     }
   }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/config.dart';
+import '../core/mensagens.dart';
 import '../core/recomecar.dart';
 import '../core/validacoes.dart';
 import '../data/api_cliente.dart';
@@ -67,7 +68,7 @@ class _EntrarTelaState extends ConsumerState<EntrarTela> {
     } on ErroCadastroAusente {
       if (mounted) await recomecarCadastro(context, ref);
     } catch (e) {
-      if (mounted) _avisar('$e');
+      if (mounted) _avisar(mensagemDeErro(e));
     } finally {
       if (mounted) setState(() => _enviando = false);
     }

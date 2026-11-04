@@ -1,36 +1,8 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:dio/dio.dart';
 import 'package:equilibra/data/api_cliente.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Responde as chamadas do Dio sem rede e guarda o que foi enviado.
-class AdaptadorFalso implements HttpClientAdapter {
-  AdaptadorFalso(this.responder);
-
-  final ResponseBody Function(RequestOptions pedido) responder;
-  final pedidos = <RequestOptions>[];
-
-  @override
-  Future<ResponseBody> fetch(
-    RequestOptions options,
-    Stream<Uint8List>? requestStream,
-    Future<void>? cancelFuture,
-  ) async {
-    pedidos.add(options);
-    return responder(options);
-  }
-
-  @override
-  void close({bool force = false}) {}
-}
-
-ResponseBody resposta(int status, Object corpo, {Map<String, List<String>> cabecalhos = const {}}) =>
-    ResponseBody.fromString(jsonEncode(corpo), status, headers: {
-      Headers.contentTypeHeader: [Headers.jsonContentType],
-      ...cabecalhos,
-    });
+import 'apoio/falsos.dart';
 
 const _sessaoJson = {
   'token': 'tok',
