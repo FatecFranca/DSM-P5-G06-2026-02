@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../core/recomecar.dart';
 import '../core/tema.dart';
 import '../data/api_cliente.dart';
 import '../data/models/resultado.dart';
@@ -31,6 +32,11 @@ class HistoricoTela extends ConsumerWidget {
                   FilledButton(
                     onPressed: () => context.push('/entrar?modo=entrar'),
                     child: const Text('Entrar'),
+                  )
+                else if (e is ErroCadastroAusente)
+                  FilledButton(
+                    onPressed: () => recomecarCadastro(context, ref),
+                    child: const Text('Aceitar o termo de novo'),
                   )
                 else
                   OutlinedButton(

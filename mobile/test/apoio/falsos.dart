@@ -11,7 +11,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ApiFalsa implements ApiCliente {
   final chamadas = <String>[];
   String? ultimoIdAnonimo;
+
+  /// Erro devolvido por cadastrar/entrar.
   ErroApi? erro;
+
+  /// Erro devolvido por prever e historico (ex.: ErroCadastroAusente).
+  ErroApi? erroDados;
 
   Sessao _sessao(String usuarioId, String email) => Sessao(
         token: 'tok-$usuarioId',
@@ -42,11 +47,17 @@ class ApiFalsa implements ApiCliente {
   Future<void> apagarDados(String usuarioId) async => chamadas.add('apagarDados');
 
   @override
-  Future<List<AvaliacaoResumo>> historico(String usuarioId) async => [];
+  Future<List<AvaliacaoResumo>> historico(String usuarioId) async {
+    if (erroDados != null) throw erroDados!;
+    return [];
+  }
 
   @override
-  Future<Resultado> prever(String usuarioId, Questionario respostas) =>
-      throw UnimplementedError('não usado nestes testes');
+  Future<Resultado> prever(String usuarioId, Questionario respostas) async {
+    chamadas.add('prever');
+    if (erroDados != null) throw erroDados!;
+    throw UnimplementedError('resultado não usado nestes testes');
+  }
 }
 
 /// Container do Riverpod com armazenamentos em memória e a API falsa.

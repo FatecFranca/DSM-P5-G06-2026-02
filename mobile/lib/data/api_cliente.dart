@@ -19,6 +19,13 @@ class ErroSessao extends ErroApi {
   ErroSessao(super.mensagem);
 }
 
+/// O servidor não conhece o id deste aparelho (banco recriado, dados que sobraram do modo demo...).
+/// É preciso aceitar o termo de novo para registrar o aparelho.
+class ErroCadastroAusente extends ErroApi {
+  ErroCadastroAusente()
+      : super('Seu cadastro não foi encontrado no servidor. Aceite o termo de novo para continuar.');
+}
+
 /// Único ponto do app que conversa com a API do Equilibra.
 class ApiCliente {
   /// [token]: token da sessão de login; quando presente, vai em todas as chamadas.
@@ -121,7 +128,12 @@ class ApiCliente {
     if (status == 401 && pedeLogin) return ErroSessao(detalhe ?? 'Sua sessão expirou. Entre de novo.');
     if (status == 403) return ErroSessao('Esta sessão não tem acesso a estes dados. Entre de novo.');
     if (status == 401) return ErroApi(detalhe ?? 'Acesso não autorizado à API.');
-    if (status == 404) return ErroApi('Cadastro não encontrado. Reabra o app e aceite o termo.');
+    // Só o 404 da nossa API ("Usuário não encontrado...") significa aparelho desconhecido. Um 404
+    // genérico ("Not Found", ex.: API_URL errada) não pode apagar os dados locais.
+    if (status == 404 && (detalhe?.startsWith('Usuário não encontrado') ?? false)) {
+      return ErroCadastroAusente();
+    }
+    if (status == 404) return ErroApi('Serviço não encontrado. Verifique o endereço da API.');
     if (status == 409 || status == 429) return ErroApi(detalhe ?? 'Não foi possível concluir. Tente de novo.');
     if (status == 422) return ErroApi('Alguma resposta está fora do esperado.');
     return ErroApi('Erro no servidor ($status). Tente mais tarde.');

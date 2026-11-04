@@ -116,6 +116,20 @@ void main() {
       expect(e.mensagem, 'E-mail ou senha incorretos.');
     });
 
+    test('404 "Usuário não encontrado" vira ErroCadastroAusente (o servidor não conhece o aparelho)', () async {
+      expect(await erroDe(resposta(404, {'detail': 'Usuário não encontrado'})), isA<ErroCadastroAusente>());
+      expect(
+        await erroDe(resposta(404, {'detail': 'Usuário não encontrado. Aceite o termo em POST /usuarios antes.'})),
+        isA<ErroCadastroAusente>(),
+      );
+    });
+
+    test('404 genérico (endereço errado) não apaga nada: é só um aviso', () async {
+      final e = await erroDe(resposta(404, {'detail': 'Not Found'}));
+      expect(e, isNot(isA<ErroCadastroAusente>()));
+      expect(e.mensagem, contains('endereço da API'));
+    });
+
     test('403 pede para entrar de novo', () async {
       expect(await erroDe(resposta(403, {'detail': 'x'})), isA<ErroSessao>());
     });

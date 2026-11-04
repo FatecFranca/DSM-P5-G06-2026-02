@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/config.dart';
+import '../core/recomecar.dart';
 import '../core/validacoes.dart';
+import '../data/api_cliente.dart';
 import '../state/provedores.dart';
 
 enum ModoConta { criar, entrar }
@@ -62,6 +64,8 @@ class _EntrarTelaState extends ConsumerState<EntrarTela> {
       if (!mounted) return;
       _avisar(_criando ? 'Conta criada! Seu histórico agora fica guardado.' : 'Bem-vindo de volta!');
       context.go('/');
+    } on ErroCadastroAusente {
+      if (mounted) await recomecarCadastro(context, ref);
     } catch (e) {
       if (mounted) _avisar('$e');
     } finally {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/recomecar.dart';
 import '../data/api_cliente.dart';
 import '../data/models/questionario.dart';
 import '../data/opcoes.dart';
@@ -28,6 +29,7 @@ class _QuestionarioTelaState extends ConsumerState<QuestionarioTela> {
       if (mounted) context.pushReplacement('/resultado', extra: resultado);
     } catch (e) {
       if (!mounted) return;
+      if (e is ErroCadastroAusente) return recomecarCadastro(context, ref);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('$e'),
         action: e is ErroSessao
