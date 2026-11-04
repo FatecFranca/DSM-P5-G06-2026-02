@@ -60,6 +60,19 @@ pytest -q                       # testes (usam SQLite, não precisam do PostgreS
 uvicorn app.main:app --reload
 ```
 
+### 2c. Testes da API contra PostgreSQL
+
+Por padrão os testes usam SQLite. Para rodá-los contra um PostgreSQL real, use um banco **só de testes**
+(as tabelas são apagadas e recriadas a cada teste) e informe-o em `TESTE_DATABASE_URL`:
+
+```bash
+docker run -d --name equilibra-testes -p 127.0.0.1:55432:5432 -e POSTGRES_PASSWORD=teste -e POSTGRES_DB=equilibra_testes postgres:16-alpine
+cd backend
+TESTE_DATABASE_URL=postgresql+psycopg://postgres:teste@127.0.0.1:55432/equilibra_testes pytest -q
+```
+
+Banco criado antes das contas de usuário: aplique `database/migracoes/001_contas.sql` (pode rodar mais de uma vez).
+
 ### 3. App Flutter
 
 Veja [`mobile/README.md`](mobile/README.md).

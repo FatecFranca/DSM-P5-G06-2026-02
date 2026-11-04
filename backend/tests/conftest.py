@@ -1,4 +1,9 @@
-"""Os testes usam um SQLite temporário, sem precisar de PostgreSQL rodando."""
+"""Por padrão os testes usam um SQLite temporário, sem precisar de PostgreSQL rodando.
+
+Para rodar contra um PostgreSQL (como o do Azure), defina TESTE_DATABASE_URL apontando para um
+banco SÓ de testes: as tabelas são apagadas e recriadas a cada teste. A variável é separada de
+DATABASE_URL de propósito, para nunca apagar o banco da aplicação por engano.
+"""
 
 import os
 import tempfile
@@ -7,7 +12,7 @@ from pathlib import Path
 import pytest
 
 _banco = Path(tempfile.mkdtemp()) / "teste.db"
-os.environ["DATABASE_URL"] = f"sqlite:///{_banco}"
+os.environ["DATABASE_URL"] = os.environ.get("TESTE_DATABASE_URL") or f"sqlite:///{_banco}"
 os.environ["API_KEY"] = "chave-de-teste"
 os.environ["JWT_SEGREDO"] = "segredo-de-teste-com-mais-de-32-caracteres"
 
@@ -19,9 +24,11 @@ from app.database import Base, engine  # noqa: E402
 from app.main import app  # noqa: E402
 
 
-@event.listens_for(engine, "connect")
-def _ligar_chaves_estrangeiras(conexao, _):
-    conexao.execute("PRAGMA foreign_keys=ON")
+if engine.dialect.name == "sqlite":  # o PostgreSQL já confere as chaves estrangeiras
+
+    @event.listens_for(engine, "connect")
+    def _ligar_chaves_estrangeiras(conexao, _):
+        conexao.execute("PRAGMA foreign_keys=ON")
 
 
 @pytest.fixture(autouse=True)
