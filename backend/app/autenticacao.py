@@ -26,7 +26,8 @@ ALGORITMO = "HS256"
 _hasher = PasswordHasher()
 # Quando o e-mail não existe, conferimos a senha contra este hash mesmo assim: a resposta
 # demora o mesmo tempo e não revela quais e-mails estão cadastrados.
-_HASH_FICTICIO = _hasher.hash("senha-ficticia-so-para-igualar-o-tempo")
+SENHA_FICTICIA = "senha-ficticia-so-para-igualar-o-tempo"
+_HASH_FICTICIO = _hasher.hash(SENHA_FICTICIA)
 
 _portador = HTTPBearer(auto_error=False, description="Token recebido em /auth/login ou /auth/cadastro")
 
@@ -37,7 +38,7 @@ def gerar_hash(senha: str) -> str:
 
 def senha_confere(senha: str, hash_salvo: str | None) -> bool:
     try:
-        _hasher.verify(hash_salvo or _HASH_FICTICIO, senha)
+        _hasher.verify(_HASH_FICTICIO if hash_salvo is None else hash_salvo, senha)
     except (VerificationError, InvalidHashError):
         return False
     return hash_salvo is not None

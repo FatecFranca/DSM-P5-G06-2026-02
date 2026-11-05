@@ -11,6 +11,7 @@ from pydantic import ValidationError
 
 from app.autenticacao import (
     ALGORITMO,
+    SENHA_FICTICIA,
     LimiteDeTentativas,
     criar_token,
     gerar_hash,
@@ -35,6 +36,12 @@ def test_mesma_senha_gera_hashes_diferentes():
 def test_senha_sem_conta_ou_hash_invalido_nunca_confere():
     assert not senha_confere("qualquer", None)
     assert not senha_confere("qualquer", "isto-nao-e-um-hash")
+
+
+def test_senha_ficticia_nunca_entra():
+    """O hash fictício só serve para igualar o tempo de resposta: não pode abrir nenhuma conta."""
+    assert not senha_confere(SENHA_FICTICIA, None)
+    assert not senha_confere(SENHA_FICTICIA, "")
 
 
 def test_token_ida_e_volta():
