@@ -83,14 +83,13 @@ class ApiCliente {
     required String email,
     required String senha,
   }) async {
-    final r = await _executar(() => _dio.post('/auth/cadastro', data: {
-          'usuario_id': usuarioId,
-          'email': email,
-          'senha': senha,
-          'consentimento': true,
-          'versao_termo': Config.versaoTermoConta,
-        }));
-    return Sessao.fromJson(r.data as Map<String, dynamic>);
+    return _chamarConta('/auth/cadastro', {
+      'usuario_id': usuarioId,
+      'email': email,
+      'senha': senha,
+      'consentimento': true,
+      'versao_termo': Config.versaoTermoConta,
+    });
   }
 
   /// Entra na conta. As avaliações do [usuarioIdAnonimo] deste aparelho são unidas a ela.
@@ -99,12 +98,25 @@ class ApiCliente {
     required String senha,
     String? usuarioIdAnonimo,
   }) async {
-    final r = await _executar(() => _dio.post('/auth/login', data: {
-          'email': email,
-          'senha': senha,
-          if (usuarioIdAnonimo != null) 'usuario_id_anonimo': usuarioIdAnonimo,
-        }));
-    return Sessao.fromJson(r.data as Map<String, dynamic>);
+    return _chamarConta('/auth/login', {
+      'email': email,
+      'senha': senha,
+      if (usuarioIdAnonimo != null) 'usuario_id_anonimo': usuarioIdAnonimo,
+    });
+  }
+
+  /// Cadastro e login. A API recusa com 422 alguns e-mails que parecem válidos no celular
+  /// (ex.: ana@empresa.local); aqui a mensagem genérica não faria sentido para o usuário.
+  Future<Sessao> _chamarConta(String rota, Map<String, dynamic> dados) async {
+    try {
+      final r = await _dio.post(rota, data: dados);
+      return Sessao.fromJson(r.data as Map<String, dynamic>);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 422) {
+        throw ErroApi('Confira o e-mail e a senha: algum deles não é válido.');
+      }
+      throw _traduzir(e);
+    }
   }
 
   Future<Response<dynamic>> _executar(Future<Response<dynamic>> Function() chamada) async {

@@ -31,12 +31,13 @@ class _QuestionarioTelaState extends ConsumerState<QuestionarioTela> {
     } catch (e) {
       if (!mounted) return;
       if (e is ErroCadastroAusente) return recomecarCadastro(context, ref);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(mensagemDeErro(e)),
-        action: e is ErroSessao
+      avisar(
+        ScaffoldMessenger.of(context),
+        mensagemDeErro(e),
+        acao: e is ErroSessao
             ? SnackBarAction(label: 'Entrar', onPressed: () => context.push('/entrar?modo=entrar'))
             : null,
-      ));
+      );
     } finally {
       if (mounted) setState(() => _enviando = false);
     }

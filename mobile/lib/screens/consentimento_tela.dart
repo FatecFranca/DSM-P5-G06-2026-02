@@ -26,7 +26,7 @@ class _ConsentimentoTelaState extends ConsumerState<ConsentimentoTela> {
       if (mounted) context.go('/');
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mensagemDeErro(e))));
+      avisar(ScaffoldMessenger.of(context), mensagemDeErro(e));
     } finally {
       if (mounted) setState(() => _enviando = false);
     }
@@ -52,7 +52,8 @@ class _ConsentimentoTelaState extends ConsumerState<ConsentimentoTela> {
             Text('Antes de começar', style: estilo.titleMedium),
             const SizedBox(height: 8),
             const _Item('Isto não é um diagnóstico. O resultado é uma estimativa educativa.'),
-            const _Item('Não pedimos nome, e-mail nem telefone. Você é identificado por um código anônimo.'),
+            const _Item('Para usar o app, não pedimos nome, e-mail nem telefone: você é identificado por um código anônimo.'),
+            const _Item('Criar uma conta é opcional. Só nesse caso guardamos seu e-mail, e você aceita um termo próprio.'),
             const _Item('Suas respostas ficam guardadas para mostrar seu histórico.'),
             const _Item('Você pode apagar todos os seus dados a qualquer momento.'),
             const SizedBox(height: 16),

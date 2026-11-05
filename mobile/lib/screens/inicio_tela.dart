@@ -40,7 +40,7 @@ class InicioTela extends ConsumerWidget {
       if (context.mounted) context.go('/consentimento');
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mensagemDeErro(e))));
+        avisar(ScaffoldMessenger.of(context), mensagemDeErro(e));
       }
     }
   }

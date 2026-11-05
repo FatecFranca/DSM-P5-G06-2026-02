@@ -42,8 +42,7 @@ class _EntrarTelaState extends ConsumerState<EntrarTela> {
     super.dispose();
   }
 
-  void _avisar(String mensagem) =>
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mensagem)));
+  void _avisar(String mensagem) => avisar(ScaffoldMessenger.of(context), mensagem);
 
   Future<void> _enviar() async {
     if (!_formulario.currentState!.validate()) return;
@@ -107,6 +106,8 @@ class _EntrarTelaState extends ConsumerState<EntrarTela> {
                     controller: _email,
                     decoration: const InputDecoration(labelText: 'E-mail'),
                     keyboardType: TextInputType.emailAddress,
+                    autocorrect: false, // o corretor do teclado trocava "teste" por "tested"
+                    enableSuggestions: false,
                     autofillHints: const [AutofillHints.email],
                     textInputAction: TextInputAction.next,
                     validator: Validacoes.email,

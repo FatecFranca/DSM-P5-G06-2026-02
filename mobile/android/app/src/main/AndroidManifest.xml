@@ -1,8 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- usesCleartextTraffic: só enquanto a API local roda sem HTTPS. Remover antes da entrega. -->
+    <!-- allowBackup=false: as chaves do armazenamento seguro não vão no backup; restaurar os dados
+         num celular novo deixaria o token ilegível. -->
     <application
         android:label="Equilibra"
+        android:allowBackup="false"
         android:usesCleartextTraffic="true"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">

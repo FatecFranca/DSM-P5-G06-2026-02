@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../data/api_cliente.dart';
 import '../state/provedores.dart';
+import 'mensagens.dart';
 
 /// Resposta ao ErroCadastroAusente: o servidor não reconhece este aparelho.
 /// Limpa os dados locais e volta ao termo de consentimento, que registra o aparelho de novo.
@@ -13,5 +14,5 @@ Future<void> recomecarCadastro(BuildContext context, WidgetRef ref) async {
   final rotas = GoRouter.of(context);
   await ref.read(sessaoProvider.notifier).sair();
   rotas.go('/consentimento');
-  mensageiro.showSnackBar(SnackBar(content: Text(ErroCadastroAusente().mensagem)));
+  avisar(mensageiro, ErroCadastroAusente().mensagem);
 }

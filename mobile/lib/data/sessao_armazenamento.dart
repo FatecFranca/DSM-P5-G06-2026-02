@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -35,8 +36,21 @@ class SessaoArmazenamento {
     return null;
   }
 
-  Future<void> salvar(Sessao sessao) =>
-      _armazenamento.write(key: _chave, value: jsonEncode(sessao.toJson()));
+  /// Sem armazenamento seguro disponível, a sessão vale só enquanto o app estiver aberto:
+  /// o login não pode falhar por isso.
+  Future<void> salvar(Sessao sessao) async {
+    try {
+      await _armazenamento.write(key: _chave, value: jsonEncode(sessao.toJson()));
+    } on PlatformException catch (e) {
+      debugPrint('Não foi possível guardar a sessão: ${e.code}');
+    }
+  }
 
-  Future<void> apagar() => _armazenamento.delete(key: _chave);
+  Future<void> apagar() async {
+    try {
+      await _armazenamento.delete(key: _chave);
+    } on PlatformException catch (e) {
+      debugPrint('Não foi possível apagar a sessão: ${e.code}');
+    }
+  }
 }
