@@ -1,14 +1,21 @@
 import uuid
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, Query, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from ..autenticacao import obter_usuario_autorizado, usuario_do_token
+from ..autenticacao import exigir_token, obter_usuario_autorizado, usuario_do_token
 from ..database import obter_sessao
 from ..models import Avaliacao, Usuario
-from ..schemas import AvaliacaoResumo, Probabilidades, UsuarioCriar, UsuarioResposta
+from ..painel import montar_painel
+from ..schemas import (
+    AvaliacaoResumo,
+    PainelResposta,
+    Probabilidades,
+    UsuarioCriar,
+    UsuarioResposta,
+)
 
 router = APIRouter(prefix="/usuarios", tags=["Usuários"])
 
@@ -59,6 +66,24 @@ def historico(
         )
         for a in linhas
     ]
+
+
+@router.get("/{usuario_id}/painel", response_model=PainelResposta)
+def painel(
+    usuario_id: uuid.UUID,
+    sessao: Session = Depends(obter_sessao),
+    id_do_token: uuid.UUID = Depends(exigir_token),
+):
+    """Média de todas as respostas e dicas personalizadas. Exclusivo de quem tem conta."""
+    if id_do_token != usuario_id:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Sem permissão para acessar estes dados")
+    obter_usuario_autorizado(sessao, usuario_id, id_do_token)
+    avaliacoes = sessao.scalars(
+        select(Avaliacao)
+        .where(Avaliacao.usuario_id == usuario_id)
+        .order_by(Avaliacao.criado_em, Avaliacao.id)
+    ).all()
+    return montar_painel(avaliacoes)
 
 
 @router.delete("/{usuario_id}", status_code=status.HTTP_204_NO_CONTENT)

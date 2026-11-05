@@ -85,6 +85,7 @@ Veja [`mobile/README.md`](mobile/README.md).
 | POST | `/usuarios` | Registra o aceite do termo para o id anônimo do aparelho |
 | POST | `/predicoes` | Classifica o risco e salva a avaliação |
 | GET | `/usuarios/{id}/avaliacoes` | Histórico, do mais recente ao mais antigo |
+| GET | `/usuarios/{id}/painel` | Dashboard de quem tem conta: média de todas as respostas e dicas personalizadas (exige token) |
 | DELETE | `/usuarios/{id}` | Apaga o usuário, a conta (se houver) e todas as avaliações (LGPD) |
 | POST | `/auth/cadastro` | Transforma o usuário anônimo do aparelho numa conta (e-mail e senha) e devolve um token |
 | POST | `/auth/login` | Confere e-mail e senha e devolve um token; pode unir à conta o histórico anônimo do aparelho |

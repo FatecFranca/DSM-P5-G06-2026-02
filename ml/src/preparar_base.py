@@ -27,17 +27,8 @@ DESTINO = RAIZ / "data" / "processed" / "base_tratada.csv"
 RELATORIO = RAIZ / "reports" / "qualidade_base.json"
 
 
-def main() -> None:
-    bruta = pd.read_csv(ORIGEM)
-
-    qualidade = {
-        "linhas": int(len(bruta)),
-        "colunas": int(bruta.shape[1]),
-        "ausentes": int(bruta.isna().sum().sum()),
-        "linhas_duplicadas": int(bruta.duplicated().sum()),
-        "ids_duplicados": int(bruta["Student_ID"].duplicated().sum()),
-    }
-
+def tratar_base(bruta: pd.DataFrame) -> pd.DataFrame:
+    """Remove colunas, traduz nomes e categorias e converte a nota. Usada também por gerar_referencias.py."""
     base = bruta.drop(columns=list(COLUNAS_REMOVIDAS))
     base = base.rename(columns=RENOMEAR)
 
@@ -49,7 +40,21 @@ def main() -> None:
 
     base["nota_semestre_anterior"] = (base["nota_semestre_anterior"] * FATOR_NOTA).round(2)
     base["assinatura_paga"] = base["assinatura_paga"].astype(int)
-    base = base[ENTRADAS + [ALVO]]
+    return base[ENTRADAS + [ALVO]]
+
+
+def main() -> None:
+    bruta = pd.read_csv(ORIGEM)
+
+    qualidade = {
+        "linhas": int(len(bruta)),
+        "colunas": int(bruta.shape[1]),
+        "ausentes": int(bruta.isna().sum().sum()),
+        "linhas_duplicadas": int(bruta.duplicated().sum()),
+        "ids_duplicados": int(bruta["Student_ID"].duplicated().sum()),
+    }
+
+    base = tratar_base(bruta)
 
     qualidade["distribuicao_alvo"] = base[ALVO].value_counts().to_dict()
     qualidade["faixas_numericas"] = {

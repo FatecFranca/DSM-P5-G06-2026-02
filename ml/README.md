@@ -10,6 +10,7 @@ O autor não descreve como os dados foram coletados, e por isso tratamos a base 
 
 1. `src/preparar_base.py`: confere a qualidade, remove colunas, traduz nomes e categorias e gera `data/processed/base_tratada.csv` e `reports/qualidade_base.json`.
 2. `src/treinar_modelo.py`: compara 3 algoritmos, escolhe um, avalia, salva `models/modelo_burnout.joblib` e gera `reports/metricas_modelo.json`.
+3. `src/gerar_referencias.py`: calcula a média de cada resposta por nível de risco e salva em `backend/app/referencias_base.json`. As dicas do painel do estudante comparam a média dele com a dos estudantes de risco baixo. Um teste da API confere que o arquivo continua batendo com a base.
 
 As duas usam `src/variaveis.py`, que é a definição única das variáveis. API e app usam exatamente os mesmos nomes.
 

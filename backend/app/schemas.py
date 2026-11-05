@@ -132,6 +132,36 @@ class ContaResposta(BaseModel):
     conta_criada_em: datetime
 
 
+class DicaPainel(BaseModel):
+    titulo: str
+    texto: str
+    tipo: Literal["melhorar", "manter"]
+    variavel: str | None = Field(None, description="Resposta a que a dica se refere, quando houver")
+
+
+class PainelResposta(BaseModel):
+    """Média de todas as respostas do estudante e dicas do que pode melhorar."""
+
+    total_avaliacoes: int
+    primeira_em: datetime | None = None
+    ultima_em: datetime | None = None
+    risco_atual: NivelRisco | None = Field(None, description="Nível da avaliação mais recente")
+    tendencia: Literal["melhorando", "piorando", "estavel"] | None = Field(
+        None, description="Chance de risco alto em relação à avaliação anterior"
+    )
+    contagem_risco: dict[NivelRisco, int] = {}
+    probabilidades_medias: Probabilidades | None = None
+    medias: dict[str, float] = Field(
+        default={}, description="Média das respostas numéricas; assinatura_paga é a fração de vezes (0 a 1)"
+    )
+    mais_comuns: dict[str, str] = Field(default={}, description="Resposta mais frequente das perguntas de escolha")
+    referencias_risco_baixo: dict[str, float]
+    nota_referencias: str
+    dicas: list[DicaPainel] = []
+    apoio: str | None = Field(None, description="Preenchido quando o risco atual é alto")
+    aviso: str
+
+
 class Saude(BaseModel):
     status: str
     versao_modelo: str

@@ -1,0 +1,30 @@
+{
+  "fonte": "Média por nível de risco na base de treino (Kaggle, 50 mil registros, provavelmente sintética).",
+  "media_risco_baixo": {
+    "nota_semestre_anterior": 8.01,
+    "horas_ia_semana": 4.64,
+    "horas_estudo_semana": 11.97,
+    "qtd_ferramentas_ia": 2.79,
+    "dependencia_ia": 2.82,
+    "ansiedade_provas": 3.93,
+    "assinatura_paga": 0.37
+  },
+  "media_risco_alto": {
+    "nota_semestre_anterior": 7.71,
+    "horas_ia_semana": 15.21,
+    "horas_estudo_semana": 10.08,
+    "qtd_ferramentas_ia": 2.81,
+    "dependencia_ia": 4.64,
+    "ansiedade_provas": 4.89,
+    "assinatura_paga": 0.51
+  },
+  "desvio": {
+    "nota_semestre_anterior": 1.2,
+    "horas_ia_semana": 8.27,
+    "horas_estudo_semana": 5.16,
+    "qtd_ferramentas_ia": 1.19,
+    "dependencia_ia": 1.82,
+    "ansiedade_provas": 2.14,
+    "assinatura_paga": 0.49
+  }
+}
