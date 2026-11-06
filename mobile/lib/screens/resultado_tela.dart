@@ -71,7 +71,7 @@ class ResultadoTela extends StatelessWidget {
               child: ListTile(
                 leading: const Icon(Icons.person_add_alt_1_outlined),
                 title: const Text('Quer acompanhar sua evolução?'),
-                subtitle: const Text('Crie uma conta gratuita para guardar seu histórico.'),
+                subtitle: const Text('Crie uma conta gratuita para ter um painel com suas médias e dicas.'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => context.push('/entrar'),
               ),

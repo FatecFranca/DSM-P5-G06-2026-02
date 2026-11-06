@@ -6,6 +6,7 @@ import '../core/config.dart';
 import '../data/api_cliente.dart';
 import '../data/api_demo.dart';
 import '../data/armazenamento_local.dart';
+import '../data/models/painel.dart';
 import '../data/models/resultado.dart';
 import '../data/models/sessao.dart';
 import '../data/sessao_armazenamento.dart';
@@ -49,6 +50,17 @@ final apiProvider = Provider<ApiCliente>(
 final historicoProvider = FutureProvider.autoDispose<List<AvaliacaoResumo>>((ref) {
   final api = ref.watch(apiProvider);
   return api.historico(ref.read(armazenamentoProvider).usuarioId);
+});
+
+/// Dados do painel da tela Home, exclusivo de quem tem conta.
+/// Use ref.invalidate(painelProvider) depois de uma nova avaliação.
+final painelProvider = FutureProvider.autoDispose<Painel>((ref) {
+  final api = ref.watch(apiProvider);
+  final sessao = ref.watch(sessaoProvider);
+  // Ao sair da conta, a Home fica na tela por mais um instante e o painel recarrega. Sem sessão, a
+  // API não é chamada: isso criaria um id novo e o enviaria antes de o usuário aceitar o termo de novo.
+  if (sessao == null) throw ErroSessao('Entre na sua conta para ver o painel.');
+  return api.painel(sessao.usuarioId);
 });
 
 class SessaoControle extends Notifier<Sessao?> {

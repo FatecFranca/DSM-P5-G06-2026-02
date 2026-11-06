@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../core/config.dart';
+import 'models/painel.dart';
 import 'models/questionario.dart';
 import 'models/resultado.dart';
 import 'models/sessao.dart';
@@ -66,6 +67,12 @@ class ApiCliente {
     return (r.data as List)
         .map((e) => AvaliacaoResumo.fromJson(e as Map<String, dynamic>))
         .toList();
+  }
+
+  /// Média de todas as respostas e dicas. Exclusivo de quem tem conta (exige o token).
+  Future<Painel> painel(String usuarioId) async {
+    final r = await _executar(() => _dio.get('/usuarios/$usuarioId/painel', options: _opcoes));
+    return Painel.fromJson(r.data as Map<String, dynamic>);
   }
 
   Future<void> apagarDados(String usuarioId) async {

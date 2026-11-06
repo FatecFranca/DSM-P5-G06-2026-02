@@ -27,6 +27,7 @@ class _QuestionarioTelaState extends ConsumerState<QuestionarioTela> {
       final id = ref.read(armazenamentoProvider).usuarioId;
       final resultado = await ref.read(apiProvider).prever(id, _q);
       ref.invalidate(historicoProvider);
+      ref.invalidate(painelProvider);
       if (mounted) context.pushReplacement('/resultado', extra: resultado);
     } catch (e) {
       if (!mounted) return;

@@ -61,6 +61,7 @@ class _EntrarTelaState extends ConsumerState<EntrarTela> {
         await controle.entrar(email: email, senha: _senha.text);
       }
       ref.invalidate(historicoProvider);
+      ref.invalidate(painelProvider);
       if (!mounted) return;
       _avisar(_criando ? 'Conta criada! Seu histórico agora fica guardado.' : 'Bem-vindo de volta!');
       context.go('/');
@@ -84,8 +85,8 @@ class _EntrarTelaState extends ConsumerState<EntrarTela> {
           Text('Acompanhe sua evolução', style: estilo.headlineSmall),
           const SizedBox(height: 8),
           const Text(
-            'Com uma conta, seu histórico fica guardado e você pode vê-lo em outro celular. '
-            'A autoavaliação continua livre, com ou sem conta.',
+            'Com uma conta, você tem um painel com a média das suas respostas e dicas do que '
+            'melhorar, e seu histórico fica guardado. A autoavaliação continua livre, com ou sem conta.',
           ),
           const SizedBox(height: 24),
           SegmentedButton<ModoConta>(

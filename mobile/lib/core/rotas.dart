@@ -5,6 +5,7 @@ import '../data/models/resultado.dart';
 import '../screens/consentimento_tela.dart';
 import '../screens/entrar_tela.dart';
 import '../screens/historico_tela.dart';
+import '../screens/home_tela.dart';
 import '../screens/inicio_tela.dart';
 import '../screens/questionario_tela.dart';
 import '../screens/resultado_tela.dart';
@@ -13,17 +14,24 @@ import '../state/provedores.dart';
 final rotasProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/',
-    // Sem o aceite do termo (LGPD), o usuário só vê a tela de consentimento.
     redirect: (context, state) {
-      final consentiu = ref.read(armazenamentoProvider).consentiu;
-      final naTelaDeTermo = state.matchedLocation == '/consentimento';
-      if (!consentiu && !naTelaDeTermo) return '/consentimento';
-      if (consentiu && naTelaDeTermo) return '/';
+      final local = state.matchedLocation;
+      // Sem o aceite do termo (LGPD), o usuário só vê a tela de consentimento.
+      if (!ref.read(armazenamentoProvider).consentiu) {
+        return local == '/consentimento' ? null : '/consentimento';
+      }
+      if (local == '/consentimento') return '/';
+
+      // Quem entrou numa conta tem a Home com o painel; o painel é exclusivo de quem tem conta.
+      final logado = ref.read(sessaoProvider) != null;
+      if (logado && local == '/') return '/home';
+      if (!logado && local == '/home') return '/entrar?modo=entrar';
       return null;
     },
     routes: [
       GoRoute(path: '/consentimento', builder: (context, state) => const ConsentimentoTela()),
       GoRoute(path: '/', builder: (context, state) => const InicioTela()),
+      GoRoute(path: '/home', builder: (context, state) => const HomeTela()),
       GoRoute(path: '/questionario', builder: (context, state) => const QuestionarioTela()),
       GoRoute(
         path: '/resultado',

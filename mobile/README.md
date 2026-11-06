@@ -5,7 +5,8 @@
 | Rota | Tela | O que faz |
 | --- | --- | --- |
 | `/consentimento` | Consentimento | Termo de uso e privacidade (LGPD). Registra o id anônimo na API |
-| `/` | Início | Acesso à autoavaliação e ao histórico; situação da conta; menu para sair e apagar os dados |
+| `/` | Início | Para quem não entrou numa conta: autoavaliação, histórico e convite para criar conta (ou aviso de sessão expirada) |
+| `/home` | Home | Para quem entrou numa conta: dashboard com o risco atual e a tendência, dicas personalizadas, a média de todas as respostas comparada à dos estudantes de risco baixo e as respostas mais comuns. Quem não tem conta é levado ao login |
 | `/questionario` | Questionário | 12 perguntas com listas, controles deslizantes e chave liga/desliga |
 | `/resultado` | Resultado | Nível de risco, probabilidades, orientações e apoio (CVV) no risco alto; convite para criar conta |
 | `/historico` | Histórico | Gráfico da chance de risco alto e lista das avaliações |
@@ -13,7 +14,7 @@
 
 ## Conta (opcional)
 
-- O app funciona sem conta; o **resultado nunca depende de login**.
+- O app funciona sem conta; o **resultado nunca depende de login**. A conta libera a Home com o dashboard.
 - Criar conta transforma o usuário anônimo do aparelho em conta: o histórico continua o mesmo.
   O cadastro exige o aceite do termo **2.0** (que inclui a guarda do e-mail).
 - Entrar numa conta une a ela as avaliações anônimas do aparelho.
@@ -32,7 +33,7 @@ lib/
   data/                   cliente da API (dio), modo demo, armazenamentos (local e seguro), modelos e opções
   state/provedores.dart   provedores Riverpod (estado), incluindo o controle da sessão de login
   screens/                uma tela por arquivo
-  widgets/                campos reutilizáveis do formulário
+  widgets/                peças reutilizáveis (campos do formulário, menu da conta, aviso do modo demo)
 test/                     testes de unidade e de widgets (apoio/falsos.dart: API falsa para os testes)
 ```
 

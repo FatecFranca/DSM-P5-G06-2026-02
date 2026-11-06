@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:equilibra/data/api_cliente.dart';
+import 'package:equilibra/data/models/painel.dart';
 import 'package:equilibra/data/models/questionario.dart';
 import 'package:equilibra/data/models/resultado.dart';
 import 'package:equilibra/data/models/sessao.dart';
@@ -19,7 +20,7 @@ class ApiFalsa implements ApiCliente {
   /// Erro devolvido por cadastrar/entrar.
   ErroApi? erro;
 
-  /// Erro devolvido por prever e historico (ex.: ErroCadastroAusente).
+  /// Erro devolvido por prever, historico e painel (ex.: ErroCadastroAusente).
   ErroApi? erroDados;
 
   Sessao _sessao(String usuarioId, String email) => Sessao(
@@ -56,6 +57,20 @@ class ApiFalsa implements ApiCliente {
     return [];
   }
 
+  /// O que painel() devolve; sem definir, um painel vazio.
+  Painel painelDevolvido = const Painel(totalAvaliacoes: 0, aviso: 'Não é diagnóstico');
+
+  /// Falha interna (não é ErroApi) ao carregar o painel.
+  Object? painelErroInterno;
+
+  @override
+  Future<Painel> painel(String usuarioId) async {
+    chamadas.add('painel');
+    if (erroDados != null) throw erroDados!;
+    if (painelErroInterno != null) throw painelErroInterno!;
+    return painelDevolvido;
+  }
+
   @override
   Future<Resultado> prever(String usuarioId, Questionario respostas) async {
     chamadas.add('prever');
@@ -67,13 +82,18 @@ class ApiFalsa implements ApiCliente {
 /// Container do Riverpod com armazenamentos em memória e a API falsa no lugar das duas APIs.
 /// Atenção: trocar as APIs inteiras esconde problemas de ligação entre provedores (como um ciclo);
 /// para isso use [criarContainerComRede], que mantém os provedores reais.
-Future<ProviderContainer> criarContainer(ApiFalsa api, {Map<String, Object> prefs = const {}}) async {
+Future<ProviderContainer> criarContainer(
+  ApiFalsa api, {
+  Map<String, Object> prefs = const {},
+  Sessao? sessao,
+}) async {
   SharedPreferences.setMockInitialValues(prefs);
   FlutterSecureStorage.setMockInitialValues({});
   final container = ProviderContainer(overrides: [
     prefsProvider.overrideWithValue(await SharedPreferences.getInstance()),
     apiProvider.overrideWithValue(api),
     apiPublicaProvider.overrideWithValue(api),
+    sessaoInicialProvider.overrideWithValue(sessao),
   ]);
   return container;
 }
